@@ -1,0 +1,54 @@
+services:
+  db-contact-management:
+    image: postgres:14.3
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ./postgres-users:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - contact-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-contact
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - contact-network
+
+  users-service:
+    build:
+      context: .
+    container_name: contact-management
+    ports:
+      - "3004:3004"
+    environment:
+      DB_HOST: db-contact-management
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      REDIS_HOST: redis-contact
+      REDIS_PORT: 6379
+    depends_on:
+      - db-contact-management
+      - redis
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - contact-network
+
+networks:
+  contact-network:
+    driver: bridge
