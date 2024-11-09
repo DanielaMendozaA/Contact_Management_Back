@@ -20,13 +20,13 @@ import { CloudinaryModule } from './upload/cloudinary.module';
 
 @Module({
   imports: [
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
-      ttl: 0,
-    }),
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   store: redisStore,
+    //   host: process.env.REDIS_HOST || 'localhost',
+    //   port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    //   ttl: 0,
+    // }),
     ConfigModule.forRoot({
       validationSchema: JoiValidation,
       isGlobal: true,

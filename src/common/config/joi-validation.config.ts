@@ -9,8 +9,8 @@ export const JoiValidation = Joi.object({
     DATABASE_NAME: Joi.string().required(),
     EXECUTE_SEEDS: Joi.boolean().required(),
     JWT_SECRET: Joi.string().required(),
-    REDIS_HOST: Joi.string().required(),
-    REDIS_PORT: Joi.number().required(),
+    // REDIS_HOST: Joi.string().required(),
+    // REDIS_PORT: Joi.number().required(),
     CLOUDINARY_CLOUD_NAME: Joi.string().required(),
     CLOUDINARY_API_KEY: Joi.string().required(),
     CLOUDINARY_API_SECRET: Joi.string().required()

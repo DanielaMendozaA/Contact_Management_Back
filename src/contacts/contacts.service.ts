@@ -10,44 +10,44 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { QueryDto } from './dto/query-contact.dto';
 
 @Injectable()
-export class ContactsService implements IContactService, OnModuleInit {
+export class ContactsService implements IContactService {
     constructor(
         @InjectRepository(Contact)
         private readonly contactRepository: Repository<Contact>,
-        @Inject(CACHE_MANAGER)
-        private readonly cacheManager: Cache
+        // @Inject(CACHE_MANAGER)
+        // private readonly cacheManager: Cache
     ) { }
 
-    async onModuleInit() {
-        const contacts = await this.contactRepository.find();
-        if (contacts.length > 0) {
-            await this.cacheManager.set('all-contacts', contacts);
-            console.log('Contactos iniciales cargados en la caché');
-        }
-    }
+    // async onModuleInit() {
+    //     const contacts = await this.contactRepository.find();
+    //     if (contacts.length > 0) {
+    //         await this.cacheManager.set('all-contacts', contacts);
+    //         console.log('Contactos iniciales cargados en la caché');
+    //     }
+    // }
 
 
     async createContact(createContactDto: CreateContactDto): Promise<Contact> {
         const contact = this.contactRepository.create(createContactDto)
 
-        await this.cacheManager.del('all-contacts')
+        // await this.cacheManager.del('all-contacts')
 
         return await this.contactRepository.save(contact)
     }
 
     async editContact(id: number, updateContactDto: UpdateContactDto): Promise<UpdateResult> {
         const updatedContact = await this.contactRepository.update(id, updateContactDto);
-        if(updatedContact.affected !== 0){
-            await this.cacheManager.del('all-contacts')
-        }
+        // if(updatedContact.affected !== 0){
+        //     await this.cacheManager.del('all-contacts')
+        // }
         return updatedContact
     }
 
     async deleteContact(id: number): Promise<DeleteResult> {
         const deletedContact = await this.contactRepository.delete(id);
-        if(deletedContact.affected !== 0){
-            await this.cacheManager.del('all-contacts')
-        }
+        // if(deletedContact.affected !== 0){
+        //     await this.cacheManager.del('all-contacts')
+        // }
         return deletedContact
     }
 
@@ -56,54 +56,78 @@ export class ContactsService implements IContactService, OnModuleInit {
     }
 
     async findAllWithQuery({ name, phone }: QueryDto): Promise<Contact[]> {
-        const cacheContacts: Contact[] = await this.cacheManager.get('all-contacts')
+        // const cacheContacts: Contact[] = await this.cacheManager.get('all-contacts')
 
         // console.log(cacheContacts);
+
+        const queryBuilder = this.contactRepository.createQueryBuilder('contact');
+        if (name)
+            queryBuilder.andWhere('LOWER(contact.name) LIKE LOWER(:name)', { name: `%${name}%` });
+
+        if (phone)
+            queryBuilder.andWhere('contact.phone LIKE :phone', { phone: `%${phone}%` })
+
+        const contacts = await queryBuilder.getMany();
+
+        if (name || phone) {
+            const allContacts = await this.contactRepository.find();
+            console.log("existe query se setea todo");
+
+            // await this.cacheManager.set('all-contacts', allContacts);
+        } else {
+            console.log("no existe query se setea get many");
+            // await this.cacheManager.set('all-contacts', contacts)
+
+        }
+
+        console.log("contactos retornados desde base de datos");
+
+        return contacts
         
 
 
-        if (!cacheContacts) {
-            const queryBuilder = this.contactRepository.createQueryBuilder('contact');
-            if (name)
-                queryBuilder.andWhere('LOWER(contact.name) LIKE LOWER(:name)', { name: `%${name}%` });
+        // if (!cacheContacts) {
+        //     const queryBuilder = this.contactRepository.createQueryBuilder('contact');
+        //     if (name)
+        //         queryBuilder.andWhere('LOWER(contact.name) LIKE LOWER(:name)', { name: `%${name}%` });
 
-            if (phone)
-                queryBuilder.andWhere('contact.phone LIKE :phone', { phone: `%${phone}%` })
+        //     if (phone)
+        //         queryBuilder.andWhere('contact.phone LIKE :phone', { phone: `%${phone}%` })
 
-            const contacts = await queryBuilder.getMany();
+        //     const contacts = await queryBuilder.getMany();
 
-            if (name || phone) {
-                const allContacts = await this.contactRepository.find();
-                console.log("existe query se setea todo");
+        //     if (name || phone) {
+        //         const allContacts = await this.contactRepository.find();
+        //         console.log("existe query se setea todo");
 
-                await this.cacheManager.set('all-contacts', allContacts);
-            } else {
-                console.log("no existe query se setea get many");
-                await this.cacheManager.set('all-contacts', contacts)
+        //         await this.cacheManager.set('all-contacts', allContacts);
+        //     } else {
+        //         console.log("no existe query se setea get many");
+        //         await this.cacheManager.set('all-contacts', contacts)
 
-            }
+        //     }
 
-            console.log("contactos retornados desde base de datos");
+        //     console.log("contactos retornados desde base de datos");
 
-            return contacts
-        }
+        //     return contacts
+        // }
 
-        let filteredCacheContacts = cacheContacts;
+        // let filteredCacheContacts = cacheContacts;
 
-        if (name) {
-            filteredCacheContacts = filteredCacheContacts.filter(contact =>
-                contact.name.toLowerCase().includes(name.toLowerCase())
-            );
-        }
-        if (phone) {
-            filteredCacheContacts = filteredCacheContacts.filter(contact =>
-                contact.phone.toString().includes(phone)
-            );
-        }
+        // if (name) {
+        //     filteredCacheContacts = filteredCacheContacts.filter(contact =>
+        //         contact.name.toLowerCase().includes(name.toLowerCase())
+        //     );
+        // }
+        // if (phone) {
+        //     filteredCacheContacts = filteredCacheContacts.filter(contact =>
+        //         contact.phone.toString().includes(phone)
+        //     );
+        // }
 
-        console.log("contactos retornados desde cache");
+        // console.log("contactos retornados desde cache");
 
-        return filteredCacheContacts;
+        // return filteredCacheContacts;
 
     }
 
