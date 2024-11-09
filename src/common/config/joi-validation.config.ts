@@ -6,7 +6,7 @@ export const JoiValidation = Joi.object({
     DB_HOST: Joi.string().required(),
     DB_USER: Joi.string().required(),
     DB_PASSWORD: Joi.string().required(),
-    DB_NAME: Joi.string().required(),
+    DATABASE_NAME: Joi.string().required(),
     EXECUTE_SEEDS: Joi.boolean().required(),
     JWT_SECRET: Joi.string().required(),
     REDIS_HOST: Joi.string().required(),
