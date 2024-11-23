@@ -11,7 +11,7 @@ export class QueryDto {
 
   @ApiPropertyOptional({ description: "Filter by phone number", example: '1234567890' })
   @IsOptional()
-  @IsNumberString()
+  @IsString()
   phone?: string;
 
 

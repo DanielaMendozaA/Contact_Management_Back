@@ -1,9 +1,10 @@
 import { AuditableEntity } from "src/common/entities/auditable.entity";
 import { ContactCategoryEnum } from "src/common/enums/category.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/entities/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity()
+@Entity('contacts')
 export class Contact extends AuditableEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -14,8 +15,8 @@ export class Contact extends AuditableEntity {
     @Column('text')
     email: string;
 
-    @Column('bigint')
-    phone: number;
+    @Column('text')
+    phone: string;
 
     @Column('text', { nullable: true })
     photo: string;
@@ -34,6 +35,9 @@ export class Contact extends AuditableEntity {
         enum: ContactCategoryEnum
     })
     category: ContactCategoryEnum
+
+    @ManyToOne(() => User, user => user.contacts)
+    user: User
 
 
 }

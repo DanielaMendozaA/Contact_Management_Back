@@ -3,20 +3,23 @@ import { IsString, MinLength, Matches, IsEmail, IsNumber, IsOptional, IsEnum } f
 import { ContactCategoryEnum } from "src/common/enums/category.enum";
 
 export class CreateContactDto {
-    
-  @ApiProperty({ description: "Name", example: 'Daniela Mendoza A'})
+  @ApiProperty({ description: 'User ID', example: '45dea4fc-2cbc-4835-9a4a-46eb52effef0' })
   @IsString()
-  @MinLength(6)
+  userId: string;
+
+  @ApiProperty({ description: "Name", example: 'Daniela Mendoza A' })
+  @IsString()
+  @MinLength(1)
   name: string;
 
-  @ApiProperty({ description: "Contact's email", example: 'daniela@gmail.com'})
+  @ApiProperty({ description: "Contact's email", example: 'daniela@gmail.com' })
   @IsString()
   @IsEmail()
   email: string;
 
   @ApiProperty({ description: "Phone number", example: 1234567890 })
-  @IsNumber()
-  phone: number;
+  @IsString()
+  phone: string;
 
   @ApiProperty({ description: "Contact's category", example: 'cliente' })
   @IsEnum(ContactCategoryEnum)
@@ -40,4 +43,6 @@ export class CreateContactDto {
   @IsNumber()
   @IsOptional()
   longitude?: number;
+
+
 }

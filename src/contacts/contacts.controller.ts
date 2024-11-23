@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { GetContactResponseDto } from './dto/get-contact-response.dto';
@@ -8,6 +8,7 @@ import { CreateContactDto } from './dto/create-contact.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateContactDto } from './dto/update-contact.dto';
 import { QueryDto } from './dto/query-contact.dto';
+import { QueryContactByIdDto } from './dto/query-contact-by-id.dto';
 
 @ApiTags("Contacts")
 @ApiExtraModels(GetContactResponseDto)
@@ -17,6 +18,17 @@ export class ContactsController {
     @Inject('IContactService')
     private readonly contactsService: IContactService
   ) {}
+
+  
+  @Get('users')
+  getContactsByUserId(@Query() query: QueryContactByIdDto) {
+      return this.contactsService.findContactsByUserId(query);
+  }
+
+  @Get('all-users')
+  getAllContactsByUserNoQuery(@Query() query: QueryContactByIdDto){
+    return this.contactsService.getContactsByUserIdNoQuery(query.userId)
+  }
 
   @ApiDocGetAllContacts(GetContactResponseDto)
   @Get()

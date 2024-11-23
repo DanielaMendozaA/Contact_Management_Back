@@ -6,7 +6,6 @@ export class CreateUserDto {
   @ApiProperty({ description: "UserName", example: 'DanielaMendozaA'})
   @IsString()
   @MinLength(6)
-  @Matches(/^\S*$/, { message: 'userName - The username should not contain spaces' })
   userName: string;
 
   @ApiProperty({ description: "User's email", example: 'daniela@gmail.com'})

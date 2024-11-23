@@ -53,7 +53,6 @@ export class AuthService implements IAuthService {
       userName: createdUser.userName,
       email: createdUser.email
     }
-    console.log(userResponse);
     
     return userResponse
   }

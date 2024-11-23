@@ -15,7 +15,8 @@ import { User } from './entities/user.entity';
     useClass: UsersService
   }],
   exports: [
-    'IUserService'
+    'IUserService',
+    TypeOrmModule
   ]
 })
 export class UsersModule {}

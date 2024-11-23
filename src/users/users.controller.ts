@@ -19,6 +19,7 @@ export class UsersController {
   @ApiDocGetUserByTerm(GetUserResponseDto)
   @Get(':term')
   async findOneByTerm(@Param('term') term: string) {
+
     const user = await this.userService.findOneByTerm(term);
     if (!user) {
       throw new NotFoundException('User not found');
